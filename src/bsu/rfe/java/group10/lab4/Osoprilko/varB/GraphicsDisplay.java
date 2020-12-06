@@ -10,6 +10,7 @@ public class GraphicsDisplay extends JPanel {
     // Список координат точек для построения графика
     private Double[][] graphicsData;
     private Double [][] graphicsData2;
+    private boolean twoGraphics = false;
     // Флаговые переменные, задающие правила отображения графика
     private boolean showAxis = true;
     private boolean showMarkers = true;
@@ -22,6 +23,7 @@ public class GraphicsDisplay extends JPanel {
     private double scale;
     // Различные стили черчения линий
     private BasicStroke graphicsStroke;
+    private BasicStroke graphicsStroke2;
     private BasicStroke axisStroke;
     private BasicStroke markerStroke;
     // Шрифт отображения подписей к осям координат
@@ -32,9 +34,9 @@ public class GraphicsDisplay extends JPanel {
         setBackground(Color.WHITE);
 // Сконструировать необходимые объекты, используемые в рисовании
 // Перо для рисования графика
-        graphicsStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_ROUND, 10.0f, null, 0.0f);
-// Перо для рисования осей координат
+        graphicsStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 10.0f, new float[] {30, 10, 30, 10, 30, 10, 10, 10, 10, 10, 10, 10}, 0.0f);
+        graphicsStroke2 = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 10.0f, null, 0.0f);
+        // Перо для рисования осей координат
         axisStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER, 10.0f, null, 0.0f);
 // Перо для рисования контуров маркеров
@@ -63,7 +65,9 @@ public class GraphicsDisplay extends JPanel {
     }
 
 //---------------------------------------------------------------------------------------
-// Методы-модификаторы для изменения параметров отображения графика
+
+
+    // Методы-модификаторы для изменения параметров отображения графика
 // Изменение любого параметра приводит к перерисовке области
     public void setShowAxis(boolean showAxis) {
         this.showAxis = showAxis;
@@ -73,6 +77,8 @@ public class GraphicsDisplay extends JPanel {
         this.showMarkers = showMarkers;
         repaint();
     }
+
+
     protected Point2D.Double xyToPoint(double x, double y) {
 // Вычисляем смещение X от самой левой точки (minX)
         double deltaX = x - minX;
@@ -229,19 +235,194 @@ public class GraphicsDisplay extends JPanel {
 // Выбрать красный цвет для закрашивания маркеров внутри
         canvas.setPaint(Color.RED);
 // Шаг 2 - Организовать цикл по всем точкам графика
-        for (Double[] point: graphicsData) {
+        for (Double[] point : graphicsData) {
+            canvas.setPaint(Color.RED);
+            int digit = (int) (double) point[1];
+            if (digit < 0)
+                digit *= (-1);
+            int number = 0;
+            int sum = 0;
+            for (; ; ) {
+                number = digit % 10;
+                digit /= 10;
+                sum += number;
+                if (sum > 10) break;
+                if (digit < 1) break;
+
+
+            }
+            if (sum < 10) canvas.setColor(Color.BLUE);
 // Инициализировать эллипс как объект для представления маркера
             Ellipse2D.Double marker = new Ellipse2D.Double();
 /* Эллипс будет задаваться посредством указания координат его
 центра и угла прямоугольника, в который он вписан */
 // Центр - в точке (x,y)
             Point2D.Double center = xyToPoint(point[0], point[1]);
-// Угол прямоугольника - отстоит на расстоянии (3,3)
-            Point2D.Double corner = shiftPoint(center, 3, 3);
+// Угол прямоугольника - отстоит на расстоянии (5.5, 5.5)
+            Point2D.Double corner = shiftPoint(center, 5.5, 5.5);
+            Point2D.Double currentPoint = shiftPoint(center, 0.0, 5.5);
+            Point2D.Double nextPoint = shiftPoint(center, 0.0, -5.5);
+            Line2D.Double marker1 = new Line2D.Double(currentPoint, nextPoint);
+            currentPoint = shiftPoint(center, 5.5, 0.0);
+            nextPoint = shiftPoint(center, -5.5, 0.0);
+            Line2D.Double marker2 = new Line2D.Double(currentPoint, nextPoint);
 // Задать эллипс по центру и диагонали
             marker.setFrameFromCenter(center, corner);
             canvas.draw(marker); // Начертить контур маркера
+            canvas.draw(marker1);
+            canvas.draw(marker2);
             canvas.fill(marker); // Залить внутреннюю область маркера
         }
+        if (twoGraphics) {
+            // Шаг 1 - Установить специальное перо для черчения контуров маркеров
+            canvas.setStroke(markerStroke);
+            // Выбрать красный цвета для контуров маркеров
+            canvas.setColor(Color.GREEN);
+            // Выбрать красный цвет для закрашивания маркеров внутри
+            canvas.setPaint(Color.GREEN);
+            for (Double[] point : graphicsData2) {
+                canvas.setPaint(Color.GREEN);
+                int digit = (int) (double) point[1];
+                if (digit < 0)
+                    digit *= (-1);
+                int number = 0;
+                int sum = 0;
+                for (; ; ) {
+                    number = digit % 10;
+                    digit /= 10;
+                    sum += number;
+                    if (sum > 10) break;
+                    if (digit < 1) break;
+
+
+                }
+                if (sum < 10) canvas.setColor(Color.BLUE);
+                // Инициализировать эллипс как объект для представления маркера
+                Ellipse2D.Double marker = new Ellipse2D.Double();
+                /* Эллипс будет задаваться посредством указания координат его центра и угла прямоугольника, в который он вписан */
+                // Центр - в точке (x,y)
+                Point2D.Double center = xyToPoint(point[0], point[1]);
+                // Угол прямоугольника - отстоит на расстоянии (5.5, 5.5)
+                Point2D.Double corner = shiftPoint(center, 5.5, 5.5);
+                Point2D.Double currentPoint = shiftPoint(center, 0.0, 5.5);
+                Point2D.Double nextPoint = shiftPoint(center, 0.0, -5.5);
+                Line2D.Double marker1 = new Line2D.Double(currentPoint, nextPoint);
+                currentPoint = shiftPoint(center, 5.5, 0.0);
+                nextPoint = shiftPoint(center, -5.5, 0.0);
+                Line2D.Double marker2 = new Line2D.Double(currentPoint, nextPoint);
+// Задать эллипс по центру и диагонали
+                marker.setFrameFromCenter(center, corner);
+                canvas.draw(marker); // Начертить контур маркера
+                canvas.draw(marker1);
+                canvas.draw(marker2);
+                canvas.fill(marker); // Залить внутреннюю область маркера
+            }
+        }
     }
+
+    //--------------------------------------------------------------------------------
+
+    public void paintComponent(Graphics g) {
+        /* Шаг 1 - Вызвать метод предка для заливки области цветом заднего фона
+         * Эта функциональность - единственное, что осталось в наследство от
+         * paintComponent класса JPanel
+         */
+        super.paintComponent(g);
+// Шаг 2 - Если данные графика не загружены (при показе компонента при
+// запуске программы) - ничего не делать
+        if (graphicsData==null || graphicsData.length==0) return;
+        if (graphicsData2 != null && graphicsData.length != 0)
+            twoGraphics = true;
+// Шаг 3 - Определить начальные границы области отображения
+// Еѐ верхний левый угол - (minX, maxY), правый нижний - (maxX, minY)
+        if (twoGraphics)
+        {
+            double minX2 = graphicsData2[0][0];
+            double maxX2 = graphicsData2[graphicsData2.length-1][0];
+            double minY2 = graphicsData2[0][1];
+            double maxY2 = minY2;
+            minX = graphicsData[0][0];
+            maxX = graphicsData[graphicsData.length-1][0];
+            minY = graphicsData[0][1];
+            maxY = minY;
+            if (minX2 < minX) minX = minX2;
+            if (maxX2 > maxX) maxX = maxX2;
+            if (minY2 < minY) minY = minY2;
+            if (maxY2 > maxY) maxY = maxY2;
+
+        }
+        else{
+        minX = graphicsData[0][0];
+        maxX = graphicsData[graphicsData.length-1][0];
+        minY = graphicsData[0][1];
+        maxY = minY;}
+// Найти минимальное и максимальное значение функции
+        for (int i = 1; i<graphicsData.length; i++) {
+            if (graphicsData[i][1]<minY) {
+                minY = graphicsData[i][1];
+            }
+            if (graphicsData[i][1]>maxY) {
+                maxY = graphicsData[i][1];
+            }
+        }
+        if (twoGraphics)
+            for (int i = 1; i<graphicsData2.length; i++)
+            {
+                if (graphicsData2[i][1] < minY)
+                {
+                    minY = graphicsData2[i][1];
+                }
+                if (graphicsData2[i][1] > maxY)
+                {
+                    maxY = graphicsData2[i][1];
+                }
+            }
+/* Шаг 4 - Определить (исходя из размеров окна) масштабы по осям X и Y –
+сколько пикселов приходится на единицу длины по X и по Y */
+        double scaleX = getSize().getWidth() / (maxX - minX);
+        double scaleY = getSize().getHeight() / (maxY - minY);
+// Выбрать единый масштаб как минимальный из двух
+        scale = Math.min(scaleX, scaleY);
+// Шаг 5 - корректировка границ области согласно выбранному масштабу
+        if (scale==scaleX) {
+/* Если за основу был взят масштаб по оси X, значит по оси Y
+делений меньше, т.е. подлежащий отображению диапазон по Y будет меньше
+высоты окна. Значит необходимо добавить делений, сделаем это так:
+1) Вычислим, сколько делений влезет по Y при выбранном масштабе -
+getSize().getHeight()/scale;
+2) Вычтем из этого значения сколько делений требовалось изначально;
+3) Набросим по половине недостающего расстояния на maxY и minY */
+            double yIncrement = (getSize().getHeight()/scale-(maxY-minY))/2;
+            maxY += yIncrement;
+            minY -= yIncrement;
+        }
+        if (scale==scaleY) {
+// Если за основу был взят масштаб по оси Y, действовать по аналогии
+            double xIncrement = (getSize().getWidth()/scale-(maxX-minX))/2;
+            maxX += xIncrement;
+            minX -= xIncrement;
+        }
+// Шаг 5 – Преобразовать экземпляр Graphics к Graphics2D
+        Graphics2D canvas = (Graphics2D) g;
+// Шаг 6 - Сохранить текущие настройки холста
+        Stroke oldStroke = canvas.getStroke();
+        Color oldColor = canvas.getColor();
+        Paint oldPaint = canvas.getPaint();
+        Font oldFont = canvas.getFont();
+// Шаг 8 - В нужном порядке вызвать методы отображения элементов графика
+// Порядок вызова методов имеет значение, т.к. предыдущий рисунок будет
+// затираться последующим
+// Первым (если нужно) отрисовываются оси координат.
+        if (showAxis) paintAxis(canvas);
+// Затем отображается сам график
+        paintGraphics(canvas);
+// Затем (если нужно) отображаются маркеры точек графика.
+        if (showMarkers) paintMarkers(canvas);
+// Шаг 9 - Восстановить старые настройки холста
+        canvas.setFont(oldFont);
+        canvas.setPaint(oldPaint);
+        canvas.setColor(oldColor);
+        canvas.setStroke(oldStroke);
+    }
+
 }

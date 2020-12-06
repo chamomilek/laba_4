@@ -186,7 +186,8 @@ MainFrame() {
                 // Первой из потока читается координата точки X
                 Double x = in.readDouble();
                 // Затем - значение графика Y в точке X
-                Double y = in.readDouble();
+                int temp=(int)in.readDouble();
+                Double y = Double.valueOf(temp);
                 // Прочитанная пара координат добавляется в массив
                 graphicsData2[i++] = new Double[] {x, y};
             }

@@ -34,7 +34,7 @@ public class GraphicsDisplay extends JPanel {
         setBackground(Color.WHITE);
 // Сконструировать необходимые объекты, используемые в рисовании
 // Перо для рисования графика
-        graphicsStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 10.0f, new float[] {30, 10, 30, 10, 30, 10, 10, 10, 10, 10, 10, 10}, 0.0f);
+        graphicsStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 10.0f, new float[] {20, 10, 10, 10, 10, 10, 10, 10, 20, 10, 10, 10,20,10}, 0.0f);
         graphicsStroke2 = new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 10.0f, null, 0.0f);
         // Перо для рисования осей координат
         axisStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
@@ -222,21 +222,19 @@ public class GraphicsDisplay extends JPanel {
             canvas.drawString("x",
                     (float)(labelPos.getX()-bounds.getWidth()-10),
                     (float)(labelPos.getY() + bounds.getY()));
-        }
-    }
+        }}
+
 
     //------------------------------------------------------------------------------
 
     protected void paintMarkers(Graphics2D canvas) {
 // Шаг 1 - Установить специальное перо для черчения контуров маркеров
         canvas.setStroke(markerStroke);
-// Выбрать красный цвета для контуров маркеров
-        canvas.setColor(Color.RED);
 // Выбрать красный цвет для закрашивания маркеров внутри
-        canvas.setPaint(Color.RED);
+        //canvas.setPaint(Color.RED);
 // Шаг 2 - Организовать цикл по всем точкам графика
         for (Double[] point : graphicsData) {
-            canvas.setPaint(Color.RED);
+            canvas.setColor(Color.RED);
             int digit = (int) (double) point[1];
             if (digit < 0)
                 digit *= (-1);
@@ -248,8 +246,6 @@ public class GraphicsDisplay extends JPanel {
                 sum += number;
                 if (sum > 10) break;
                 if (digit < 1) break;
-
-
             }
             if (sum < 10) canvas.setColor(Color.BLUE);
 // Инициализировать эллипс как объект для представления маркера
@@ -271,7 +267,7 @@ public class GraphicsDisplay extends JPanel {
             canvas.draw(marker); // Начертить контур маркера
             canvas.draw(marker1);
             canvas.draw(marker2);
-            canvas.fill(marker); // Залить внутреннюю область маркера
+           // canvas.fill(marker); // Залить внутреннюю область маркера
         }
         if (twoGraphics) {
             // Шаг 1 - Установить специальное перо для черчения контуров маркеров
@@ -315,7 +311,7 @@ public class GraphicsDisplay extends JPanel {
                 canvas.draw(marker); // Начертить контур маркера
                 canvas.draw(marker1);
                 canvas.draw(marker2);
-                canvas.fill(marker); // Залить внутреннюю область маркера
+                //canvas.fill(marker); // Залить внутреннюю область маркера
             }
         }
     }
@@ -424,5 +420,4 @@ getSize().getHeight()/scale;
         canvas.setColor(oldColor);
         canvas.setStroke(oldStroke);
     }
-
 }

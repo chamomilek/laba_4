@@ -1,6 +1,5 @@
 package bsu.rfe.java.group10.lab4.Osoprilko.varB;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -30,7 +29,6 @@ public class GraphicsDisplay extends JPanel {
     private Font axisFont;
 
     public GraphicsDisplay() {
-// Цвет заднего фона области отображения - белый
         setBackground(Color.WHITE);
 // Сконструировать необходимые объекты, используемые в рисовании
 // Перо для рисования графика
@@ -66,7 +64,6 @@ public class GraphicsDisplay extends JPanel {
 
 //---------------------------------------------------------------------------------------
 
-
     // Методы-модификаторы для изменения параметров отображения графика
 // Изменение любого параметра приводит к перерисовке области
     public void setShowAxis(boolean showAxis) {
@@ -77,7 +74,6 @@ public class GraphicsDisplay extends JPanel {
         this.showMarkers = showMarkers;
         repaint();
     }
-
 
     protected Point2D.Double xyToPoint(double x, double y) {
 // Вычисляем смещение X от самой левой точки (minX)
@@ -97,7 +93,6 @@ public class GraphicsDisplay extends JPanel {
     }
 
     //--------------------------------------------------------------------------
-
 
     protected void paintGraphics(Graphics2D canvas) {
 // Выбрать линию для рисования графика
@@ -224,7 +219,6 @@ public class GraphicsDisplay extends JPanel {
                     (float)(labelPos.getY() + bounds.getY()));
         }}
 
-
     //------------------------------------------------------------------------------
 
     protected void paintMarkers(Graphics2D canvas) {
@@ -289,8 +283,6 @@ public class GraphicsDisplay extends JPanel {
                     sum += number;
                     if (sum > 10) break;
                     if (digit < 1) break;
-
-
                 }
                 if (sum < 10) canvas.setColor(Color.BLUE);
                 // Инициализировать эллипс как объект для представления маркера
@@ -345,7 +337,6 @@ public class GraphicsDisplay extends JPanel {
             if (maxX2 > maxX) maxX = maxX2;
             if (minY2 < minY) minY = minY2;
             if (maxY2 > maxY) maxY = maxY2;
-
         }
         else{
         minX = graphicsData[0][0];
